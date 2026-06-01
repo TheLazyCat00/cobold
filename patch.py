@@ -86,7 +86,7 @@ def verifies(key: str, verbose: bool = False) -> bool:
 	return total - 8 <= 1 or total == 3198 or total == 6384
 
 
-def evaluate_first_11(values: list[int], ops: list[int]) -> int:
+def evaluateFirst11(values: list[int], ops: list[int]) -> int:
 	"""
 	Evaluate chunks 1..11 only.
 
@@ -104,41 +104,34 @@ def evaluate_first_11(values: list[int], ops: list[int]) -> int:
 	return total
 
 
-def generate_key() -> str:
+def generateKey() -> str:
 	"""Generate one random compact key that verifies successfully."""
 	while True:
 		# The first 11 chunks are 2 digits: value digit + operation digit.
 		values = [random.randint(1, 9) for _ in range(11)]
 
-		# Operations from chunk 1 through chunk 10. Use only + and - to keep
-		# the key compact and avoid division-by-zero edge cases.
-		ops_first_10 = [random.choice([ADD, SUB]) for _ in range(10)]
-		total_after_11 = evaluate_first_11(values, ops_first_10)
+		opsFirst10 = [random.choice([ADD, SUB]) for _ in range(10)]
+		totalAfter11 = evaluateFirst11(values, opsFirst10)
 
-		# Pick whether the full expression should end at 8 or 9.
 		target = random.choice([8, 9])
+		possibleLastSteps: list[tuple[int, int]] = []
 
-		# The 11th chunk's operation affects the final one-digit chunk.
-		possible_last_steps: list[tuple[int, int]] = []
+		finalDigit = target - totalAfter11
+		if 0 <= finalDigit <= 9:
+			possibleLastSteps.append((ADD, finalDigit))
 
-		# If chunk 11 says '+', final_digit must be target - total_after_11.
-		final_digit = target - total_after_11
-		if 0 <= final_digit <= 9:
-			possible_last_steps.append((ADD, final_digit))
+		finalDigit = totalAfter11 - target
+		if 0 <= finalDigit <= 9:
+			possibleLastSteps.append((SUB, finalDigit))
 
-		# If chunk 11 says '-', final_digit must be total_after_11 - target.
-		final_digit = total_after_11 - target
-		if 0 <= final_digit <= 9:
-			possible_last_steps.append((SUB, final_digit))
-
-		if not possible_last_steps:
+		if not possibleLastSteps:
 			continue
 
-		op_11, final_digit = random.choice(possible_last_steps)
-		ops = ops_first_10 + [op_11]
+		op11, finalDigit = random.choice(possibleLastSteps)
+		ops = opsFirst10 + [op11]
 
 		chunks = [f"{value}{op}" for value, op in zip(values, ops)]
-		chunks.append(str(final_digit))
+		chunks.append(str(finalDigit))
 
 		key = "-".join(chunks)
 
@@ -173,7 +166,7 @@ settings = loadJson(settingsPath)
 settings["Activation"] = {
 	"ComputerId": None,
 	"ComputerIdV2": computerId,
-	"LicenseKey": generate_key(),
+	"LicenseKey": generateKey(),
 	"ShowTrialExpiredDialog": True,
 	"ShowSuggestProVerDialog": True,
 }
