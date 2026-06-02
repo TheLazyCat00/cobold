@@ -6,7 +6,6 @@ import re
 from pathlib import Path
 from datetime import datetime
 
-computerId = "b754d0a98986fd3eca2eae4fa8ec9a1f"
 key = "10-30-11-80-60-61-21-60-40-41-30-2"
 ADD = 0
 SUB = 1
@@ -165,7 +164,7 @@ saveJson(cachePath, cache)
 settings = loadJson(settingsPath)
 settings["Activation"] = {
 	"ComputerId": None,
-	"ComputerIdV2": computerId,
+	"ComputerIdV2": "".join(random.choices("1234567890abcdef", K=32)),
 	"LicenseKey": generateKey(),
 	"ShowTrialExpiredDialog": True,
 	"ShowSuggestProVerDialog": True,
