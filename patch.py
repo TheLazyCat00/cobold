@@ -164,7 +164,7 @@ saveJson(cachePath, cache)
 settings = loadJson(settingsPath)
 settings["Activation"] = {
 	"ComputerId": None,
-	"ComputerIdV2": "".join(random.choices("1234567890abcdef", K=32)),
+	"ComputerIdV2": "".join(random.choices("1234567890abcdef", k=32)),
 	"LicenseKey": generateKey(),
 	"ShowTrialExpiredDialog": True,
 	"ShowSuggestProVerDialog": True,
