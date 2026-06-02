@@ -5,19 +5,27 @@ import re
 
 from pathlib import Path
 from datetime import datetime
+import winreg
+import hashlib
 
-key = "10-30-11-80-60-61-21-60-40-41-30-2"
 ADD = 0
 SUB = 1
-
-def getTime():
-	return datetime.now().strftime('%m/%d/%Y %H:%M:%S')
 
 roamingDir = Path(os.environ.get('APPDATA'))
 cachePath = roamingDir / "WindowTop" / "cache.json"
 settingsPath = roamingDir / "WindowTop" / "settings.json"
+
+print("Modifying:")
 print(cachePath)
 print(settingsPath)
+
+def getTime():
+	return datetime.now().strftime('%m/%d/%Y %H:%M:%S')
+
+def getComputerId():
+    key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\Microsoft\Cryptography")
+    guid = winreg.QueryValueEx(key, "MachineGuid")[0]
+    return hashlib.md5(guid.encode('utf-8')).hexdigest()
 
 def loadJson(path):
 	try:
@@ -164,7 +172,7 @@ saveJson(cachePath, cache)
 settings = loadJson(settingsPath)
 settings["Activation"] = {
 	"ComputerId": None,
-	"ComputerIdV2": "".join(random.choices("1234567890abcdef", k=32)),
+	"ComputerIdV2": getComputerId(),
 	"LicenseKey": generateKey(),
 	"ShowTrialExpiredDialog": True,
 	"ShowSuggestProVerDialog": True,
