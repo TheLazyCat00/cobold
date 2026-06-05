@@ -151,7 +151,7 @@ def generateKey() -> str:
 cache = loadJson(cachePath)
 cache["Activation"] = {
 	"IsLicenseCached": True,
-	"ActivationLastCheckTime": getTime(),
+	"ActivationLastCheckTime": "01/01/2500 01:01:01",
 	"LicenseKeyMaxVersionTime": None,
 	"LicenseKeyMaxComputers": 5,
 	"LicenseKeyMaxUsers": 0,
